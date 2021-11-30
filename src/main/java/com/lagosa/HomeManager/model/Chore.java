@@ -14,6 +14,7 @@ public class Chore {
     private final String typeName;
     private final int typeId;
     private final String description;
+    private final String title;
 
     public int getId() {
         return id;
@@ -67,11 +68,15 @@ public class Chore {
         return typeId;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public String getDescription() {
         return description;
     }
 
-    public Chore(UUID family, UUID submittedBy, Date submissionDate, Date deadline, String typeName, int typeId, String description) {
+    public Chore(UUID family, UUID submittedBy, Date submissionDate, Date deadline, String typeName, int typeId, String description, String title) {
         this.family = family;
         this.submittedBy = submittedBy;
         this.submissionDate = submissionDate;
@@ -79,5 +84,6 @@ public class Chore {
         this.typeName = typeName;
         this.typeId = typeId;
         this.description = description;
+        this.title = title;
     }
 }

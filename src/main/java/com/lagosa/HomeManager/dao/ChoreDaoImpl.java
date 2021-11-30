@@ -2,11 +2,13 @@ package com.lagosa.HomeManager.dao;
 
 import com.lagosa.HomeManager.model.Chore;
 import com.lagosa.HomeManager.model.ChoreType;
+import com.lagosa.HomeManager.model.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -25,8 +27,8 @@ public class ChoreDaoImpl implements ChoreDao{
 
     @Override
     public void createChore(Chore chore) {
-        String sql = "INSERT INTO chores (family,submittedBy,deadline,type,description) VALUES (?,?,?,?,?)";
-        jdbcTemplate.update(sql,chore.getFamily(),chore.getSubmittedBy(),chore.getDeadline(),chore.getTypeId(),chore.getDescription());
+        String sql = "INSERT INTO chores (family,submittedBy,deadline,type,description,title) VALUES (?,?,?,?,?,?)";
+        jdbcTemplate.update(sql,chore.getFamily(),chore.getSubmittedBy(),chore.getDeadline(),chore.getTypeId(),chore.getDescription(),chore.getTitle());
     }
 
     @Override
@@ -36,28 +38,28 @@ public class ChoreDaoImpl implements ChoreDao{
     }
 
     @Override
-    public void takeUpChore(int choreId, int userId) {
+    public void takeUpChore(int choreId, UUID userId) {
         String sql = "UPDATE chores SET doneBy = ? WHERE id = ?";
         jdbcTemplate.update(sql, userId, choreId);
     }
 
     @Override
-    public void markAsDone(int choreId, int userId) {
+    public void markAsDone(int choreId, UUID userId) {
         String sql = "UPDATE chores SET status = ?,doneBy = ? WHERE id = ?";
-        jdbcTemplate.update(sql,"DONE",userId,choreId);
+        jdbcTemplate.update(sql, Status.DONE.toString(),userId,choreId);
     }
 
     @Override
-    public List<Chore> getListOfUndoneChore(UUID familyId) {
-        String sql = "SELECT id,family,submittedBy,doneBy,status,submissionDate,deadline,choreTypes.type AS 'typeName', chores.type AS 'typeId',description" +
-                "FROM chores JOIN choreTypes ON choreTypes.type = chores.type WHERE family = ? AND status = 'NOT_DONE'";
+    public List<Chore> getListOfNotDoneChores(UUID familyId) {
+        String sql = "SELECT chores.id,family,submittedBy,doneBy,status,submissionDate,deadline,choreTypes.type AS typeName, chores.type AS typeId,description,title " +
+                "FROM chores INNER JOIN choretypes ON choreTypes.id = chores.type WHERE (family = ? AND status = 'NOT_DONE') ORDER BY deadline ASC";
         return jdbcTemplate.query(sql ,new ChoreMapper(),familyId);
     }
 
     @Override
-    public List<Chore> getTookUpChores(int userId) {
-        String sql = "SELECT id,family,submittedBy,doneBy,status,submissionDate,deadline,choreTypes.type AS 'typeName', chores.type AS 'typeId',description" +
-                "FROM chore JOIN choreTypes ON choreTypes.type = chores.type WHERE doneBy = ? AND status = 'NOT_DONE'";
+    public List<Chore> getTookUpChores(UUID userId) {
+        String sql = "SELECT chores.id,family,submittedBy,doneBy,status,submissionDate,deadline,choreTypes.type AS typeName, chores.type AS typeId,description,title " +
+                "FROM chores INNER JOIN choretypes ON choreTypes.id = chores.type WHERE doneBy = ? AND status = 'NOT_DONE'";
         return jdbcTemplate.query(sql,new ChoreMapper(),userId);
     }
 
@@ -71,12 +73,24 @@ public class ChoreDaoImpl implements ChoreDao{
         }
     }
 
+    @Override
+    public void changeDeadline(int choreId, Date newDeadline) {
+        String sql = "UPDATE chores SET deadline = ? WHERE id = ?";
+        jdbcTemplate.update(sql,newDeadline,choreId);
+    }
+
+    @Override
+    public List<ChoreType> getChoreTypes() {
+        String sql = "SELECT id,type FROM choreTypes";
+        return jdbcTemplate.query(sql,new ChoreTypeMapper());
+    }
+
     private static final class ChoreMapper implements RowMapper<Chore>{
 
         @Override
         public Chore mapRow(ResultSet rs, int rowNum) throws SQLException {
             Chore chore = new Chore((UUID) rs.getObject("family"),(UUID)rs.getObject("submittedBy"),rs.getDate("submissionDate"),
-                    rs.getDate("deadline"),rs.getString("typeName"),rs.getInt("typeId"),rs.getString("description"));
+                    rs.getDate("deadline"),rs.getString("typeName"),rs.getInt("typeId"),rs.getString("description"), rs.getString("title"));
             chore.setId(rs.getInt("id"));
             chore.setDoneBy((UUID) rs.getObject("doneBy"));
             chore.setStatus(rs.getString("status"));
