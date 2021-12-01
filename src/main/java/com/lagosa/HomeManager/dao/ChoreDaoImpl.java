@@ -1,8 +1,6 @@
 package com.lagosa.HomeManager.dao;
 
-import com.lagosa.HomeManager.model.Chore;
-import com.lagosa.HomeManager.model.ChoreType;
-import com.lagosa.HomeManager.model.Status;
+import com.lagosa.HomeManager.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -44,22 +43,24 @@ public class ChoreDaoImpl implements ChoreDao{
     }
 
     @Override
-    public void markAsDone(int choreId, UUID userId) {
-        String sql = "UPDATE chores SET status = ?,doneBy = ? WHERE id = ?";
-        jdbcTemplate.update(sql, Status.DONE.toString(),userId,choreId);
+    public void markAsDone(int choreId, UUID userId, Date dateDone) {
+        String sql = "UPDATE chores SET status = ?,doneBy = ?, donedate = ? WHERE id = ?";
+        jdbcTemplate.update(sql, Status.DONE.toString(),userId,dateDone,choreId);
     }
 
     @Override
     public List<Chore> getListOfNotDoneChores(UUID familyId) {
-        String sql = "SELECT chores.id,family,submittedBy,doneBy,status,submissionDate,deadline,choreTypes.type AS typeName, chores.type AS typeId,description,title " +
-                "FROM chores INNER JOIN choretypes ON choreTypes.id = chores.type WHERE (family = ? AND status = 'NOT_DONE') ORDER BY deadline ASC";
+        String sql = "SELECT chores.id,family,submittedBy,doneBy,status,submissionDate,deadline,choreTypes.type AS typeName, chores.type AS typeId,description,title, " +
+                " users.nickname AS submittedByName, userDone.nickname AS doneByName FROM chores INNER JOIN choretypes ON choreTypes.id = chores.type " +
+                " INNER JOIN users ON users.id = chores.submittedBy LEFT JOIN users AS userDone ON userdone.id = chores.doneBy WHERE (family = ? AND status = 'NOT_DONE') ORDER BY deadline ASC";
         return jdbcTemplate.query(sql ,new ChoreMapper(),familyId);
     }
 
     @Override
     public List<Chore> getTookUpChores(UUID userId) {
-        String sql = "SELECT chores.id,family,submittedBy,doneBy,status,submissionDate,deadline,choreTypes.type AS typeName, chores.type AS typeId,description,title " +
-                "FROM chores INNER JOIN choretypes ON choreTypes.id = chores.type WHERE doneBy = ? AND status = 'NOT_DONE'";
+        String sql = "SELECT chores.id,family,submittedBy,doneBy,status,submissionDate,deadline,choreTypes.type AS typeName, chores.type AS typeId,description,title,users.nickname AS submittedByName, " +
+                "userDone.nickname AS doneByName FROM chores INNER JOIN choretypes ON choreTypes.id = chores.type INNER JOIN users ON users.id = chores.submittedBy " +
+                "INNER JOIN users AS userDone ON userDone.id = chores.doneBy WHERE doneBy = ? AND status = 'NOT_DONE'";
         return jdbcTemplate.query(sql,new ChoreMapper(),userId);
     }
 
@@ -85,15 +86,37 @@ public class ChoreDaoImpl implements ChoreDao{
         return jdbcTemplate.query(sql,new ChoreTypeMapper());
     }
 
+    @Override
+    public List<Report> getReport(List<User> familyMembers) {
+
+        String doneChores = "SELECT chores.id,chores.family,chores.submittedby,chores.doneby,chores.status,chores.submissiondate,chores.deadline,chores.type AS typeId," +
+                "chores.description,chores.title,choreTypes.type AS typeName,users.nickname AS submittedByName, usersDone.nickname AS doneByName  FROM chores INNER JOIN choreTypes ON chores.type = choreTypes.id " +
+                "INNER JOIN users ON users.id = chores.submittedby INNER JOIN users AS usersDone ON usersDone.id = chores.doneby WHERE status = 'DONE' AND chores.doneby = ? ORDER BY donedate DESC";
+        String notFinishedChores = "SELECT chores.id,chores.family,chores.submittedby,chores.doneby,chores.status,chores.submissiondate,chores.deadline,chores.type AS typeId," +
+                "chores.description,chores.title,choreTypes.type AS typeName,users.nickname AS submittedByName, usersDone.nickname AS doneByName  FROM chores INNER JOIN choreTypes ON chores.type = choreTypes.id " +
+                "INNER JOIN users ON users.id = chores.submittedby INNER JOIN users AS usersDone ON usersDone.id = chores.doneby WHERE status = 'NOT_DONE' AND chores.doneby = ? ORDER BY donedate DESC";
+        List<Report> reportList = new ArrayList<>();
+        for(User user:familyMembers){
+            List<Chore> doneChoresList = jdbcTemplate.query(doneChores,new ChoreMapper(),user.getId());
+            List<Chore> notFinishedChoresList = jdbcTemplate.query(notFinishedChores,new ChoreMapper(),user.getId());
+
+            reportList.add(new Report(user,doneChoresList,notFinishedChoresList, doneChoresList.size(), notFinishedChoresList.size()));
+        }
+
+        return reportList;
+    }
+
     private static final class ChoreMapper implements RowMapper<Chore>{
 
         @Override
         public Chore mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Chore chore = new Chore((UUID) rs.getObject("family"),(UUID)rs.getObject("submittedBy"),rs.getDate("submissionDate"),
+            Chore chore = new Chore((UUID) rs.getObject("family"),(UUID)rs.getObject("submittedBy"), rs.getDate("submissionDate"),
                     rs.getDate("deadline"),rs.getString("typeName"),rs.getInt("typeId"),rs.getString("description"), rs.getString("title"));
             chore.setId(rs.getInt("id"));
             chore.setDoneBy((UUID) rs.getObject("doneBy"));
             chore.setStatus(rs.getString("status"));
+            chore.setDoneByName(rs.getString("doneByName"));
+            chore.setSubmitterName(rs.getString("submittedByName"));
             return chore;
         }
     }

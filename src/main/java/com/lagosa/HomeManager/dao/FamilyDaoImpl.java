@@ -79,6 +79,12 @@ public class FamilyDaoImpl implements FamilyDao{
         return jdbcTemplate.query(sql,(rs,rowcount) -> rs.getInt("joincode"));
     }
 
+    @Override
+    public List<User> getFamilyMembers(UUID familyId) {
+        String sql = "SELECT id,familyid,nickname,role,birthdate FROM users WHERE familyid = ?";
+        return jdbcTemplate.query(sql,new UserMapper(),familyId);
+    }
+
 
     private static final class FamilyMapper implements RowMapper<Family> {
         // maps all the columns of the families table to fields in a family object

@@ -2,6 +2,7 @@ package com.lagosa.HomeManager.api;
 
 import com.lagosa.HomeManager.model.Chore;
 import com.lagosa.HomeManager.model.ChoreType;
+import com.lagosa.HomeManager.model.Report;
 import com.lagosa.HomeManager.service.ChoreManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -59,5 +60,10 @@ public class ChoreAPI {
     @GetMapping(path = "/getChoreTypes")
     public List<ChoreType> getChoreTypes(){
         return choreManager.getChoreTypes();
+    }
+
+    @GetMapping(path = "/getReport/{userId}")
+    public List<Report> getReport(@PathVariable("userId") UUID userId){
+        return choreManager.getReport(userId);
     }
 }

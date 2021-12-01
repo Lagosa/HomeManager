@@ -7,7 +7,9 @@ public class Chore {
     private int id;
     private final UUID family;
     private final UUID submittedBy;
+    private String submitterName;
     private UUID doneBy;
+    private String doneByName;
     private String status;
     private final Date submissionDate;
     private Date deadline;
@@ -18,6 +20,22 @@ public class Chore {
 
     public int getId() {
         return id;
+    }
+
+    public String getSubmitterName() {
+        return submitterName;
+    }
+
+    public void setSubmitterName(String submitterName) {
+        this.submitterName = submitterName;
+    }
+
+    public String getDoneByName() {
+        return doneByName;
+    }
+
+    public void setDoneByName(String doneByName) {
+        this.doneByName = doneByName;
     }
 
     public void setId(int id) {
