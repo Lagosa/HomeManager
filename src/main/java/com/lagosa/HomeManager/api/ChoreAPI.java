@@ -21,47 +21,97 @@ public class ChoreAPI {
         this.choreManager = choreManager;
     }
 
+    /**
+     * Creates a new chore and stores it in the database
+     * @param submitterId id of the user that created the chore
+     * @param deadline deadline of the chore
+     * @param type type of the chore
+     * @param description short description of the chore
+     * @param title a meaningful title to the chore
+     */
     @PostMapping(path = "/create/{submitterId}/{deadline}/{type}/{title}")
     public void createChore(@PathVariable("submitterId") UUID submitterId, @PathVariable("deadline") String deadline, @PathVariable("type") String type,
                             @RequestBody String description,@PathVariable("title") String title){
         choreManager.createChore(submitterId,deadline,type,description,title);
     }
 
-    @PostMapping(path = "/delete/{choreId}")
-    public void deleteChore(@PathVariable("choreId") int choreId){
-        choreManager.deleteChore(choreId);
+    /**
+     * Deletes a chore if the submitter is the user who requested the deletion
+     * @param choreId the chore that needs to be deleted
+     * @param userId the user that requested the deletion
+     * @throws Exception if the user is not the submitter of the chore
+     */
+    @PostMapping(path = "/delete/{choreId}/{userId}")
+    public void deleteChore(@PathVariable("choreId") int choreId,@PathVariable("userId") UUID userId) throws Exception{
+        choreManager.deleteChore(choreId,userId);
     }
 
+    /**
+     * Assigns to a chore the user that performed the request
+     * @param choreId the chore to which the user needs to be assigned
+     * @param userId the user that performed the request
+     */
     @PostMapping(path = "/take/{choreId}/{userId}")
     public void takeUpChore(@PathVariable("choreId") int choreId, @PathVariable("userId") UUID userId){
         choreManager.takeUpChore(choreId,userId);
     }
 
+    /**
+     * Marks a chore as done, and updates the doneBy field to the user who did it
+     * @param choreId the chore that needs to be updated
+     * @param userId the user that did the chore
+     */
     @PostMapping(path = "/markDone/{choreId}/{userId}")
     public void markAsDone(@PathVariable("choreId") int choreId,@PathVariable("userId") UUID userId){
         choreManager.markAsDone(choreId,userId);
     }
 
+    /**
+     * Gets a list of all the chores of a family that were not made
+     * @param userId the user made the request, and whose family's chores needs to be returned
+     * @return the chores that were not finished yet
+     */
     @GetMapping(path = "/listOfNotDone/{userId}")
     public List<Chore> getListOfNotDoneChores(@PathVariable("userId") UUID userId){
         return choreManager.getListOfNotDoneChores(userId);
     }
 
+    /**
+     * Gets a list of all the chores the user took up and did not finish
+     * @param userId the user who requested the list
+     * @return a list of not finished chores assigned to a user
+     */
     @GetMapping(path = "/tookUpChores/{userId}")
     public List<Chore> getTookUpChores(@PathVariable("userId") UUID userId){
         return choreManager.getTookUpChores(userId);
     }
 
-    @PostMapping(path = "/changeDeadline/{choreId}/{deadline}")
-    public void changeDeadline(@PathVariable("choreId")int choreId,@PathVariable("deadline") String newDeadline){
-        choreManager.changeDeadline(choreId,newDeadline);
+    /**
+     * Updates the deadline of a chore if the requester is the submitter of the chore
+     * @param choreId the chore that needs to be updated
+     * @param newDeadline the new deadline
+     * @param userId the user that requested the update
+     * @throws Exception if the user is not the submitter of the chore
+     */
+    @PostMapping(path = "/changeDeadline/{choreId}/{userId}/{deadline}")
+    public void changeDeadline(@PathVariable("choreId")int choreId,@PathVariable("userId") UUID userId,@PathVariable("deadline") String newDeadline) throws Exception{
+        choreManager.changeDeadline(choreId,userId,newDeadline);
     }
 
+    /**
+     * Gets a list of all the chore types
+     * @return the list of all the chore types
+     */
     @GetMapping(path = "/getChoreTypes")
     public List<ChoreType> getChoreTypes(){
         return choreManager.getChoreTypes();
     }
 
+    /**
+     * Gets a report regarding the done and not done chores for every family member of the user
+     * @param userId the user for whose family the report needs to be generated
+     * @return the list of reports for every family member
+     */
     @GetMapping(path = "/getReport/{userId}")
     public List<Report> getReport(@PathVariable("userId") UUID userId){
         return choreManager.getReport(userId);
