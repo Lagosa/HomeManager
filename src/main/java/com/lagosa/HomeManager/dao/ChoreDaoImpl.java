@@ -61,7 +61,7 @@ public class ChoreDaoImpl implements ChoreDao{
     public List<Chore> getTookUpChores(UUID userId) {
         String sql = "SELECT chores.id,family,submittedBy,doneBy,status,submissionDate,deadline,choreTypes.type AS typeName, chores.type AS typeId,description,title,users.nickname AS submittedByName, " +
                 "userDone.nickname AS doneByName FROM chores INNER JOIN choretypes ON choreTypes.id = chores.type INNER JOIN users ON users.id = chores.submittedBy " +
-                "INNER JOIN users AS userDone ON userDone.id = chores.doneBy WHERE doneBy = ? AND status = 'NOT_DONE'";
+                "INNER JOIN users AS userDone ON userDone.id = chores.doneBy WHERE doneBy = ? AND status = 'NOT_DONE' ORDER BY deadline ASC";
         return jdbcTemplate.query(sql,new ChoreMapper(),userId);// also gets the name of the submitter and doer based on their id (if it was done already, else puts null
                                                                 // in those fields), and the name of the chore type
     }
