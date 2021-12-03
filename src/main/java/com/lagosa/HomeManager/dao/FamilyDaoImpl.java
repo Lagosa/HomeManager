@@ -46,11 +46,7 @@ public class FamilyDaoImpl implements FamilyDao{
     @Override
     public Family getFamily(UUID id) {
         String sql = "SELECT id,email,password,joincode FROM families WHERE id = ?";
-        try{
-            return jdbcTemplate.queryForObject(sql,new FamilyMapper(),id);
-        }catch (EmptyResultDataAccessException e){
-            return null;
-        }
+        return jdbcTemplate.queryForObject(sql,new FamilyMapper(),id);
 
     }
 
@@ -83,16 +79,26 @@ public class FamilyDaoImpl implements FamilyDao{
         return jdbcTemplate.query(sql,(rs,rowcount) -> rs.getInt("joincode"));
     }
 
+    @Override
+    public List<User> getFamilyMembers(UUID familyId) {
+        String sql = "SELECT id,familyid,nickname,role,birthdate FROM users WHERE familyid = ?";
+        return jdbcTemplate.query(sql,new UserMapper(),familyId);
+    }
+
 
     private static final class FamilyMapper implements RowMapper<Family> {
         // maps all the columns of the families table to fields in a family object
+        Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
         public Family mapRow(ResultSet rs, int rowNum) throws SQLException {
-            if(!rs.next() && rowNum == 0){
+
+            //logger.log(Level.WARNING,"Rs: " + rs.first() + " rows: " + rowNum);
+            try{
+                Family fam = new Family((java.util.UUID) rs.getObject("id"),rs.getString("email"),
+                        rs.getString("password"),rs.getInt("joincode"));
+                return fam;
+            }catch (NullPointerException e){
                 return null;
             }
-            Family fam = new Family((java.util.UUID) rs.getObject("id"),rs.getString("email"),
-                                    rs.getString("password"),rs.getInt("joincode"));
-            return fam;
         }
     }
     private static final class UserMapper implements RowMapper<User> {
