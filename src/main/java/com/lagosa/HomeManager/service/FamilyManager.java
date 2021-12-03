@@ -117,6 +117,15 @@ public class FamilyManager {
     }
 
     /**
+     * Gets the family members of the a family
+     * @param familyId the id of the family whose members are sought
+     * @return a list of users representing family members
+     */
+    public List<User> getFamilyMembers(UUID familyId){
+        return familyDao.getFamilyMembers(familyId);
+    }
+
+    /**
      * Validates an email
      * @param email the email that needs to be validated
      * @return true if the email contains @ and . (dot)

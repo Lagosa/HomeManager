@@ -52,4 +52,11 @@ public interface FamilyDao {
      * @return a list containing all the join codes used
      */
     List<Integer> getAllJoinCodes();
+
+    /**
+     * Gets all the family members of a family
+     * @param familyId the id of the family whose members are sought
+     * @return a list of users representing family members
+     */
+    List<User> getFamilyMembers(UUID familyId);
 }
