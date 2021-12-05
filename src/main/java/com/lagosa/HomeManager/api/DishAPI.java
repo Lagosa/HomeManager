@@ -7,6 +7,7 @@ import com.lagosa.HomeManager.service.DishManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,5 +66,20 @@ public class DishAPI {
     @GetMapping(path = "/getAllIngredients")
     public List<Ingredient> getAllIngredients(){
         return dishManager.getAllIngredients();
+    }
+
+    @GetMapping(path = "/getRandom/{userId}/{typeId}")
+    public Dish getRandomDish(@PathVariable("userId") UUID userId,@PathVariable("typeId") int typeId){
+        return dishManager.getRandomDish(userId,typeId);
+    }
+
+    @PostMapping(path = "/plan/{userId}/{dishId}/{day}")
+    public void planDish(@PathVariable("userId") UUID userId,@PathVariable("dishId") int dishId,@PathVariable("day") String dayToPrepare){
+        dishManager.planDish(userId,dishId, Date.valueOf(dayToPrepare));
+    }
+
+    @GetMapping(path = "/getPlan/{userId}/{start}/{end}")
+    public List<Map<String,Object>> getPlannedDishes(@PathVariable("userId") UUID userId,@PathVariable("start") String startDate,@PathVariable("end") String endDate){
+        return dishManager.getPlannedDishes(userId,Date.valueOf(startDate),Date.valueOf(endDate));
     }
 }

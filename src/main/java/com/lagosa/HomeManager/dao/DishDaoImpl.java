@@ -9,9 +9,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Repository
@@ -132,6 +135,30 @@ public class DishDaoImpl implements DishDao{
     public List<Ingredient> getAllIngredients() {
         String sql = "SELECT id AS ingredient,ingredient AS ingredientName,measurementunit, -1 AS quantity FROM ingredients";
         return jdbcTemplate.query(sql,new IngredientMapper());
+    }
+
+    @Override
+    public void planDish(UUID familyId, int dishId, Date dayWhenPrepare) {
+        String sql = "INSERT INTO dishPlans (family,dish,day) VALUES (?,?,?)";
+        jdbcTemplate.update(sql,familyId,dishId,dayWhenPrepare);
+    }
+
+    @Override
+    public List<Map<String,Object>> getPlannedDishes(UUID familyId, Date startDate, Date endDate) {
+        String sql = "SELECT dp.day,dp.dish AS id,d.name,d.type,t.type AS typeName " +
+                "FROM dishPlans AS dp INNER JOIN dishes AS d ON dp.dish = d.id INNER JOIN dishTypes AS t ON t.id = d.type " +
+                "WHERE dp.family = ? AND (dp.day > ? AND dp.day < ?)";
+        return jdbcTemplate.query(sql, (rs,rowNum) -> {
+            Map<String,Object> map = new HashMap<>();
+
+            map.put("day", rs.getDate("day"));
+            map.put("dishName",rs.getString("name"));
+            map.put("id",rs.getInt("id"));
+            map.put("type",rs.getInt("type"));
+            map.put("typeName",rs.getString("typeName"));
+
+            return map;
+        },familyId,startDate,endDate);
     }
 
     private static final class DishMapper implements RowMapper<Dish>{

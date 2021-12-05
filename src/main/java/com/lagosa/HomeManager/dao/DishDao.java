@@ -4,7 +4,9 @@ import com.lagosa.HomeManager.model.Dish;
 import com.lagosa.HomeManager.model.Ingredient;
 import com.lagosa.HomeManager.model.Visibility;
 
+import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface DishDao {
@@ -20,4 +22,7 @@ public interface DishDao {
     List<String> getTypes();
     void increaseNrTimesMade(int dishId);
     List<Ingredient> getAllIngredients();
+
+    void planDish(UUID familyId, int dishId, Date dayWhenPrepare);
+    List<Map<String,Object>> getPlannedDishes(UUID familyId, Date startDate, Date endDate);
 }
