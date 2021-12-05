@@ -1,0 +1,2 @@
+ALTER TABLE dishes
+ADD COLUMN nrTimeMade int DEFAULT 0;
