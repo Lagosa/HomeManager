@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Service
@@ -95,6 +92,21 @@ public class DishManager {
 
     public List<Map<String,Object>> getPlannedDishes(UUID userId, Date startDate, Date endDate){
        return dishDao.getPlannedDishes(getFamilyOfUser(userId),startDate,endDate);
+    }
+
+    public List<Map<String,Object>> getListOfIngredientsForADay(UUID userId, Date day){
+        List<Map<String,Object>> dishes = dishDao.getPlannedDishes(getFamilyOfUser(userId),day,day);
+
+        List<Map<String,Object>> ingredientList = new ArrayList<>();
+        for(Map<String,Object> dish : dishes){
+            Map<String,Object> newMap = new HashMap<>();
+            newMap.put("dishName",dish.get("dishName"));
+            newMap.put("ingredients",dishDao.getIngredientsOfADish((Integer) dish.get("id")));
+
+            ingredientList.add(newMap);
+        }
+
+        return ingredientList;
     }
 
     private UUID getFamilyOfUser(UUID userId){

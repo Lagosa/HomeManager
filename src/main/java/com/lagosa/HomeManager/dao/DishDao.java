@@ -16,7 +16,7 @@ public interface DishDao {
     Dish getDishById(int dishId);
     int insertNewIngredient(Ingredient ingredient);
     Ingredient getIngredient(String ingredientName);
-    Ingredient getIngredientsOfADish(int dishId);
+    List<Ingredient> getIngredientsOfADish(int dishId);
     void updateVisibility(int dishId, Visibility visibility);
     int getTypeId(String type);
     List<String> getTypes();

@@ -82,4 +82,9 @@ public class DishAPI {
     public List<Map<String,Object>> getPlannedDishes(@PathVariable("userId") UUID userId,@PathVariable("start") String startDate,@PathVariable("end") String endDate){
         return dishManager.getPlannedDishes(userId,Date.valueOf(startDate),Date.valueOf(endDate));
     }
+
+    @GetMapping(path = "/getIngredientsDay/{userId}/{day}")
+    public List<Map<String,Object>> getListOfIngredientsForADay(@PathVariable("userId") UUID userId,@PathVariable("day") String day){
+        return dishManager.getListOfIngredientsForADay(userId,Date.valueOf(day));
+    }
 }

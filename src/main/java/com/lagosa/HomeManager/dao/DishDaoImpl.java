@@ -99,10 +99,10 @@ public class DishDaoImpl implements DishDao{
     }
 
     @Override
-    public Ingredient getIngredientsOfADish(int dishId) {
+    public List<Ingredient> getIngredientsOfADish(int dishId) {
         String sql = "SELECT ingrd.ingredient,ingr.ingredient AS ingredientName, ingr.measurementunit, ingrd.quantity FROM dish_ingredients AS ingrd " +
                 "INNER JOIN ingredients AS ingr ON ingr.id = ingrd.ingredient WHERE ingrd.dish = ?";
-        return jdbcTemplate.queryForObject(sql,new IngredientMapper(),dishId);
+        return jdbcTemplate.query(sql,new IngredientMapper(),dishId);
     }
 
     @Override
@@ -147,7 +147,7 @@ public class DishDaoImpl implements DishDao{
     public List<Map<String,Object>> getPlannedDishes(UUID familyId, Date startDate, Date endDate) {
         String sql = "SELECT dp.day,dp.dish AS id,d.name,d.type,t.type AS typeName " +
                 "FROM dishPlans AS dp INNER JOIN dishes AS d ON dp.dish = d.id INNER JOIN dishTypes AS t ON t.id = d.type " +
-                "WHERE dp.family = ? AND (dp.day > ? AND dp.day < ?)";
+                "WHERE dp.family = ? AND (dp.day >= ? AND dp.day <= ?)";
         return jdbcTemplate.query(sql, (rs,rowNum) -> {
             Map<String,Object> map = new HashMap<>();
 
