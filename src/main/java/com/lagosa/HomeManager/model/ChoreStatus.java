@@ -1,6 +1,6 @@
 package com.lagosa.HomeManager.model;
 
-public enum Status {
+public enum ChoreStatus {
     NOT_DONE,
     DONE,
     OVERDUE

@@ -45,7 +45,7 @@ public class ChoreDaoImpl implements ChoreDao{
     @Override
     public void markAsDone(int choreId, UUID userId, Date dateDone) {
         String sql = "UPDATE chores SET status = ?,doneBy = ?, donedate = ? WHERE id = ?";
-        jdbcTemplate.update(sql, Status.DONE.toString(),userId,dateDone,choreId);
+        jdbcTemplate.update(sql, ChoreStatus.DONE.toString(),userId,dateDone,choreId);
     }
 
     @Override
