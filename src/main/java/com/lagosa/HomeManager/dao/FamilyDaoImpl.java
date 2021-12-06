@@ -1,17 +1,18 @@
 package com.lagosa.HomeManager.dao;
 
-import com.lagosa.HomeManager.model.Family;
-import com.lagosa.HomeManager.model.Roles;
-import com.lagosa.HomeManager.model.User;
+import com.lagosa.HomeManager.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -85,6 +86,43 @@ public class FamilyDaoImpl implements FamilyDao{
         return jdbcTemplate.query(sql,new UserMapper(),familyId);
     }
 
+    @Override
+    public void sendNotification(Notification notification) {
+        String sql = "INSERT INTO notifications (sender,receiver,title,message) VALUES (?,?,?,?)";
+        jdbcTemplate.update(sql,notification.getSender(),notification.getReceiver(),notification.getTitle(),notification.getMessage());
+    }
+
+    @Override
+    public List<Notification> getNotifications(UUID userId) {
+        String sql = "SELECT n.id,n.sender,n.receiver,n.title,n.message,n.dateSent,n.status,uR.nickname AS receiverName, uS.nickname AS senderName " +
+                "FROM notifications AS n INNER JOIN users AS uR ON uR.id = n.receiver INNER JOIN users AS uS ON uS.id = n.sender WHERE receiver = ? AND status = 'SENT'";
+        return jdbcTemplate.query(sql,new NotificationMapper(),userId);
+    }
+
+    @Override
+    public void updateNotificationStatus(int notificationId, NotificationStatus status) {
+        String sql = "UPDATE notifications SET status = ? WHERE id = ?";
+        jdbcTemplate.update(sql,status.toString(),notificationId);
+    }
+
+    @Override
+    public void setArrival(UUID familyId, UUID userId, ArrivalStatus status) {
+        String sql = "INSERT INTO arrivals (family,userId,status) VALUES (?,?,?)";
+        jdbcTemplate.update(sql,familyId,userId,status.toString());
+    }
+
+    @Override
+    public List<Map<String, Object>> getArrivalList(UUID family, Date startDate, Date endDate) {
+        String sql = "SELECT u.nickname AS nickname,a.status,a.timestampCol FROM arrivals AS a INNER JOIN users AS u ON u.id = a.userId WHERE family = ? AND (date >= ? AND date <= ?) ORDER BY timestampCol DESC";
+        return jdbcTemplate.query(sql,(rs,rowNum) ->{
+            Map<String,Object> newMap = new HashMap<>();
+            newMap.put("nickname",rs.getString("nickname"));
+            newMap.put("status",rs.getString("status"));
+            newMap.put("date",rs.getTimestamp("timestampCol"));
+            return newMap;
+        },family,startDate,endDate);
+    }
+
 
     private static final class FamilyMapper implements RowMapper<Family> {
         // maps all the columns of the families table to fields in a family object
@@ -108,6 +146,21 @@ public class FamilyDaoImpl implements FamilyDao{
                                 rs.getString("nickname"), Roles.valueOf(rs.getString("role")),
                                 rs.getDate("birthdate"));
             return user;
+        }
+    }
+
+    private static final class NotificationMapper implements RowMapper<Notification>{
+
+        @Override
+        public Notification mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Notification notification = new Notification((UUID) rs.getObject("sender"),(UUID) rs.getObject("receiver"),
+                    rs.getString("title"),rs.getString("message"));
+            notification.setId(rs.getInt("id"));
+            notification.setStatus(rs.getString("status"));
+            notification.setDateSent(rs.getDate("dateSent"));
+            notification.setReceiverName(rs.getString("receiverName"));
+            notification.setSenderName(rs.getString("senderName"));
+            return notification;
         }
     }
 }

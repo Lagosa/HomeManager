@@ -1,9 +1,10 @@
 package com.lagosa.HomeManager.dao;
 
-import com.lagosa.HomeManager.model.Family;
-import com.lagosa.HomeManager.model.User;
+import com.lagosa.HomeManager.model.*;
 
+import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface FamilyDao {
@@ -59,4 +60,11 @@ public interface FamilyDao {
      * @return a list of users representing family members
      */
     List<User> getFamilyMembers(UUID familyId);
+
+    void sendNotification(Notification notification);
+    List<Notification> getNotifications(UUID userId);
+    void updateNotificationStatus(int notificationId, NotificationStatus status);
+
+    void setArrival(UUID familyId, UUID userId, ArrivalStatus status);
+    List<Map<String,Object>> getArrivalList(UUID family, Date startDate, Date endDate);
 }

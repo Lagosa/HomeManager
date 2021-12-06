@@ -27,7 +27,7 @@ public class ChoreDaoImpl implements ChoreDao{
     @Override
     public void createChore(Chore chore) {
         String sql = "INSERT INTO chores (family,submittedBy,deadline,type,description,title) VALUES (?,?,?,?,?,?)";
-        jdbcTemplate.update(sql,chore.getFamily(),chore.getSubmittedBy(),chore.getDeadline(),chore.getTypeId(),chore.getDescription(),chore.getTitle());
+        jdbcTemplate.update(sql,chore.getFamily(),chore.getSubmittedBy(),chore.getDueDate(),chore.getTypeId(),chore.getDescription(),chore.getTitle());
     }
 
     @Override
@@ -118,6 +118,23 @@ public class ChoreDaoImpl implements ChoreDao{
         return jdbcTemplate.queryForObject(sql,new ChoreMapper(), choreId);
     }
 
+    @Override
+    public void addMemento(Memento memento) {
+        String sql = "INSERT INTO mementos (family,title,duedate) VALUES (?,?,?)";
+        jdbcTemplate.update(sql,memento.getFamily(),memento.getTitle(),memento.getDueDate());
+    }
+
+    @Override
+    public List<Memento> getMementos(UUID familyId, Date startDate, Date endDate) {
+        String sql = "SELECT id,family,title,duedate,status FROM MEMENTOS where family = ? AND (duedate >= ? AND endDate <= ?)";
+        return jdbcTemplate.query(sql,(rs,rowNum)->{
+           Memento newMemeneto = new Memento((UUID) rs.getObject("family"),rs.getString("title"),rs.getDate("duedate"));
+           newMemeneto.setId(rs.getInt("id"));
+           newMemeneto.setStatus(ChoreStatus.valueOf(rs.getString("status")));
+           return newMemeneto;
+        });
+    }
+
     private static final class ChoreMapper implements RowMapper<Chore>{
 
         @Override
@@ -126,7 +143,7 @@ public class ChoreDaoImpl implements ChoreDao{
                     rs.getDate("deadline"),rs.getString("typeName"),rs.getInt("typeId"),rs.getString("description"), rs.getString("title"));
             chore.setId(rs.getInt("id"));
             chore.setDoneBy((UUID) rs.getObject("doneBy"));
-            chore.setStatus(rs.getString("status"));
+            chore.setStatus(ChoreStatus.valueOf(rs.getString("status")));
             chore.setDoneByName(rs.getString("doneByName"));
             chore.setSubmitterName(rs.getString("submittedByName"));
             return chore;

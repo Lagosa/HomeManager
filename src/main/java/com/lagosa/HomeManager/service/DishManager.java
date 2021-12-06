@@ -29,7 +29,7 @@ public class DishManager {
         // ToDo: Add feature to insert images with dishes
 
         int typeId = dishDao.getTypeId(type);
-        int dishId = dishDao.insertDish(new Dish(getFamilyOfUser(userId),userId,name,typeId,recipe,visibility));
+        int dishId = dishDao.insertDish(new Dish(familyManager.getFamilyOfUser(userId),userId,name,typeId,recipe,visibility));
 
         int newIngredientId;
         for(Ingredient ingredient : ingredientsList){
@@ -47,7 +47,7 @@ public class DishManager {
     }
 
     public List<Dish> getDishesOfAFamily(UUID userId){
-        return dishDao.getDishesOfFamily(getFamilyOfUser(userId));
+        return dishDao.getDishesOfFamily(familyManager.getFamilyOfUser(userId));
     }
 
     public List<String> getTypes(){
@@ -87,15 +87,15 @@ public class DishManager {
     }
 
     public void planDish(UUID userId, int dishId, Date dayWhenPrepare){
-        dishDao.planDish(getFamilyOfUser(userId),dishId,dayWhenPrepare);
+        dishDao.planDish(familyManager.getFamilyOfUser(userId),dishId,dayWhenPrepare);
     }
 
     public List<Map<String,Object>> getPlannedDishes(UUID userId, Date startDate, Date endDate){
-       return dishDao.getPlannedDishes(getFamilyOfUser(userId),startDate,endDate);
+       return dishDao.getPlannedDishes(familyManager.getFamilyOfUser(userId),startDate,endDate);
     }
 
     public List<Map<String,Object>> getListOfIngredientsForADay(UUID userId, Date day){
-        List<Map<String,Object>> dishes = dishDao.getPlannedDishes(getFamilyOfUser(userId),day,day);
+        List<Map<String,Object>> dishes = dishDao.getPlannedDishes(familyManager.getFamilyOfUser(userId),day,day);
 
         List<Map<String,Object>> ingredientList = new ArrayList<>();
         for(Map<String,Object> dish : dishes){
@@ -107,9 +107,5 @@ public class DishManager {
         }
 
         return ingredientList;
-    }
-
-    private UUID getFamilyOfUser(UUID userId){
-        return familyManager.getUser(userId).getFamilyId();
     }
 }

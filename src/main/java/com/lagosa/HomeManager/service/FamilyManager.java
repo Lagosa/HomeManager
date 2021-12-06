@@ -2,16 +2,15 @@ package com.lagosa.HomeManager.service;
 
 import com.lagosa.HomeManager.dao.FamilyDao;
 import com.lagosa.HomeManager.exceptions.ApiRequestException;
-import com.lagosa.HomeManager.model.Family;
-import com.lagosa.HomeManager.model.Roles;
-import com.lagosa.HomeManager.model.User;
+import com.lagosa.HomeManager.model.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
@@ -125,6 +124,65 @@ public class FamilyManager {
         return familyDao.getFamilyMembers(familyId);
     }
 
+    public void sendNotification(UUID sender, UUID receiver, String title, String message){
+        familyDao.sendNotification(new Notification(sender,receiver,title,message));
+    }
+
+    public List<Notification> getNotifications(UUID userid){
+        List<Notification> notifications =  familyDao.getNotifications(userid);
+
+        for(Notification notification : notifications){
+            familyDao.updateNotificationStatus(notification.getId(), NotificationStatus.SEEN);
+        }
+
+        return notifications;
+    }
+
+    public void setArrivalArrived( UUID userId){
+        familyDao.setArrival(getFamilyOfUser(userId),userId,ArrivalStatus.ARRIVED);
+    }
+
+    public void setArrivalLeft(UUID userId){
+        familyDao.setArrival(getFamilyOfUser(userId),userId,ArrivalStatus.LEFT);
+    }
+
+    public List<String> getWhoIsHome(UUID userId){
+        List<Map<String,Object>> arrivalList = familyDao.getArrivalList(getFamilyOfUser(userId),Date.valueOf(LocalDate.now()),Date.valueOf(LocalDate.now()));
+        List<User> familyMembers = familyDao.getFamilyMembers(getFamilyOfUser(userId));
+
+        List<String> allMembers = new ArrayList<>();
+        for(User member : familyMembers){
+            allMembers.add(member.getNickName());
+        }
+
+        List<String> membersHome = new ArrayList<>();
+
+        for(Map<String,Object> userArrival : arrivalList){
+            if(allMembers.contains(userArrival.get("nickname"))){
+                if(userArrival.get("status").equals(ArrivalStatus.ARRIVED.toString())) {
+                    logger.log(Level.WARNING,userArrival.get("nickname") + " arrived home");
+                    membersHome.add((String) userArrival.get("nickname"));
+                    allMembers.remove(userArrival.get("nickname"));
+                }else if(userArrival.get("status").equals(ArrivalStatus.LEFT.toString())){
+                    logger.log(Level.WARNING,userArrival.get("nickname") + " left home");
+                    allMembers.remove(userArrival.get("nickname"));
+                }
+            }
+        }
+
+        return membersHome;
+    }
+
+    public List<Map<String,Object>> getArrivalList(UUID userId, Date startDate, Date endDate){
+        User user = getUser(userId);
+
+        if(user.getRole().equals(Roles.PARENT)){
+            return familyDao.getArrivalList(getFamilyOfUser(userId),startDate,endDate);
+        }
+        throw new ApiRequestException("You can't perform this query as a child!");
+    }
+
+
     /**
      * Validates an email
      * @param email the email that needs to be validated
@@ -202,6 +260,10 @@ public class FamilyManager {
             count++;
         }
         throw new Exception("There is no available code");
+    }
+
+    public UUID getFamilyOfUser(UUID userId){
+        return getUser(userId).getFamilyId();
     }
 
 }

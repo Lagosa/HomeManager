@@ -1,9 +1,6 @@
 package com.lagosa.HomeManager.dao;
 
-import com.lagosa.HomeManager.model.Chore;
-import com.lagosa.HomeManager.model.ChoreType;
-import com.lagosa.HomeManager.model.Report;
-import com.lagosa.HomeManager.model.User;
+import com.lagosa.HomeManager.model.*;
 
 import java.sql.Date;
 import java.util.List;
@@ -84,4 +81,7 @@ public interface ChoreDao {
      * @return the chore with that id
      */
     Chore getChore(int choreId);
+
+    void addMemento(Memento memento);
+    List<Memento> getMementos(UUID familyId, Date startDate, Date endDate);
 }

@@ -1,10 +1,7 @@
 package com.lagosa.HomeManager.service;
 
 import com.lagosa.HomeManager.dao.ChoreDao;
-import com.lagosa.HomeManager.model.Chore;
-import com.lagosa.HomeManager.model.ChoreType;
-import com.lagosa.HomeManager.model.Report;
-import com.lagosa.HomeManager.model.User;
+import com.lagosa.HomeManager.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -124,5 +121,13 @@ public class ChoreManager {
     public List<Report> getReport(UUID userId){
         User user = familyManager.getUser(userId);
         return choreDao.getReport(familyManager.getFamilyMembers(user.getFamilyId()));
+    }
+
+    public void addMemento(UUID userId, String title, Date dueDATE){
+        choreDao.addMemento(new Memento(familyManager.getFamilyOfUser(userId),title,dueDATE));
+    }
+
+    public List<Memento> getMementos(UUID userId, Date startDate, Date endDate){
+        return choreDao.getMementos(familyManager.getFamilyOfUser(userId),startDate,endDate);
     }
 }

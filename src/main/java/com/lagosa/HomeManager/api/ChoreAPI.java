@@ -2,11 +2,13 @@ package com.lagosa.HomeManager.api;
 
 import com.lagosa.HomeManager.model.Chore;
 import com.lagosa.HomeManager.model.ChoreType;
+import com.lagosa.HomeManager.model.Memento;
 import com.lagosa.HomeManager.model.Report;
 import com.lagosa.HomeManager.service.ChoreManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -116,4 +118,15 @@ public class ChoreAPI {
     public List<Report> getReport(@PathVariable("userId") UUID userId){
         return choreManager.getReport(userId);
     }
+
+    @PostMapping(path = "/addMemento/{user}/{title}/{dueDate}")
+    public void addMemento(@PathVariable("user") UUID userId,@PathVariable("title") String title,@PathVariable("dueDate") Date dueDATE){
+        choreManager.addMemento(userId, title, dueDATE);
+    }
+
+    @GetMapping(path = "/getMementos/{userId}/{startDate}/{endDate}")
+    public List<Memento> getMementos(@PathVariable("userId") UUID userId,@PathVariable("startDate") Date startDate,@PathVariable("endDate") Date endDate){
+        return choreManager.getMementos(userId, startDate, endDate);
+    }
+
 }
