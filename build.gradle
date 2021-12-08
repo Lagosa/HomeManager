@@ -23,6 +23,17 @@ dependencies {
 
 }
 
+task copyToLib(type: Copy) {
+	into "$buildDir/libs"
+	from(configurations.implementation)
+}
+
+
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
+
+stage.dependsOn(copyToLib)
+
 test {
 	useJUnitPlatform()
 }
