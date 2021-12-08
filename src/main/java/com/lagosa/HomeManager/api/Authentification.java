@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -47,10 +49,12 @@ public class Authentification {
      * @throws Exception if there was a problem with inserting the data into the database
      */
     @GetMapping(path = "/registerFamily/{email}/{password}")
-    public UUID registerFamily(@PathVariable("email") String emailAddress, @PathVariable("password") String password) throws ApiRequestException,Exception
+    public Map<String,String> registerFamily(@PathVariable("email") String emailAddress, @PathVariable("password") String password) throws ApiRequestException,Exception
     {
         try {
-            return familyManager.registerFamily(emailAddress, password);
+            Map<String,String> uuidMap = new HashMap<>();
+            uuidMap.put("UUID",familyManager.registerFamily(emailAddress, password).toString());
+            return uuidMap;
         }catch (ApiRequestException e){
             throw e;
         }catch (SQLException e) {
