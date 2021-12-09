@@ -4,8 +4,8 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     hikari:
-      data-source-class-name: PostgresDatasource.java
-      jdbc-url: jdbc:postgresql://ec2-52-213-119-221.eu-west-1.compute.amazonaws.com:5432/d3dek7n1hf4g80
+      data-source-class-name: com.lagosa.HomeManager.PostgresDatasource.java
+      jdbcUrl: postgresql://ec2-52-213-119-221.eu-west-1.compute.amazonaws.com:5432/d3dek7n1hf4g80
 
 server:
   port: ${PORT:8080}
