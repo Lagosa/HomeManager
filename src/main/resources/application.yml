@@ -3,8 +3,6 @@ spring:
     url: ${DATABASE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
-#    hikari:
-#      jdbc-url: ${DATABASE_URL}
     driver-class-name: org.postgresql.Driver
 
 server:

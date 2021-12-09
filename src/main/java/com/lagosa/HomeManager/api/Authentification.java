@@ -72,9 +72,9 @@ public class Authentification {
      * @throws Exception if the data from the database could not be retrieved
      */
     @GetMapping(path = "/login/{email}/{password}")
-    public UUID loginFamily(@PathVariable("email") String email,@PathVariable("password") String password)throws Exception{
+    public String loginFamily(@PathVariable("email") String email,@PathVariable("password") String password)throws Exception{
         try{
-            return familyManager.loginFamily(email, password);
+            return familyManager.loginFamily(email, password).toString();
         }catch (Exception e){
             throw e;
         }
@@ -107,10 +107,10 @@ public class Authentification {
      * @throws Exception if the user couldn't be inserted into the database
      */
     @GetMapping(path = "/joinFamily/{joinCode}/{nickname}/{role}/{birthdate}")
-    public UUID joinFamily(@PathVariable("joinCode") int joinCode, @PathVariable("nickname") String nickname,
+    public String joinFamily(@PathVariable("joinCode") int joinCode, @PathVariable("nickname") String nickname,
                            @PathVariable("role") Roles role, @PathVariable("birthdate") String birthdate) throws Exception {
         try {
-            return familyManager.joinFamily(joinCode, nickname, role, birthdate);
+            return familyManager.joinFamily(joinCode, nickname, role, birthdate).toString();
         }catch (Exception e){
             throw e;
         }
