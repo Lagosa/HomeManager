@@ -4,6 +4,6 @@ app:
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     pool-size: 20
-    driver-class-name=org.postgresql.Driver
+    driver-class-name: org.postgresql.Driver
   server:
     port: ${PORT:8080}
