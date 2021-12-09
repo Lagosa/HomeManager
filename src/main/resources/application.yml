@@ -1,11 +1,11 @@
 spring:
   datasource:
-    url: ${DATABASE_URL}
+    url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     hikari:
-      data-source-class-name: org.postgresql.Driver
-      jdbc-url: jdbc:postgresql://ec2-52-213-119-221.eu-west-1.compute.amazonaws.com:5432/d3dek7n1hf4g80
+      jdbc-url: ${SPRING_DATASOURCE_URL}
+    driver-class-name: org.postgresql.Driver
 
 server:
   port: ${PORT:8080}
