@@ -9,7 +9,10 @@ import org.springframework.util.DigestUtils;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -248,6 +251,28 @@ public class FamilyManager {
      * @throws Exception if there was no unique code found
      */
     private int generateJoinCode() throws Exception{
+        // TODO generate join code in function to time
+//        String dateS = "";
+//        LocalDateTime date = LocalDateTime.now();
+//        dateS = date.toString();
+//        String joinCode;
+//
+//        StringTokenizer token =new StringTokenizer(dateS,"-");
+//        joinCode = token.nextToken();
+//        joinCode += token.nextToken();
+//        joinCode += token.nextToken();
+//        token = new StringTokenizer(joinCode,"T");
+//        joinCode = token.nextToken();
+//        String hourMinuteSecond = token.nextToken();
+//        token = new StringTokenizer(hourMinuteSecond,":");
+//        joinCode += token.nextToken(":");
+//        joinCode += token.nextToken(":");
+//        joinCode += token.nextToken(":");
+//        token = new StringTokenizer(joinCode,".");
+//        joinCode = token.nextToken();
+//        joinCode = joinCode.substring(2);
+// not implemented yet, because it has 12 characters, too long!
+
         List<Integer> allJoinCodes = familyDao.getAllJoinCodes(); // get the list of all the codes generated so far
         int count = 0;
         int newCode;

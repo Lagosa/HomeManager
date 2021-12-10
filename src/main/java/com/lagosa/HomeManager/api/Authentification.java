@@ -64,6 +64,11 @@ public class Authentification {
         }
     }
 
+    @GetMapping(path = "/wakeUp")
+    public boolean wakeUpCall(){
+        return true;
+    }
+
     /**
      * <h3>Logs in a family based on email and password</h3>
      * @param email email used to identify the account
