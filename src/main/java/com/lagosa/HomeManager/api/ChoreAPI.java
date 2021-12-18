@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("chore")
@@ -23,19 +26,26 @@ public class ChoreAPI {
         this.choreManager = choreManager;
     }
 
-    /**
-     * Creates a new chore and stores it in the database
-     * @param submitterId id of the user that created the chore
-     * @param deadline deadline of the chore
-     * @param type type of the chore
-     * @param description short description of the chore
-     * @param title a meaningful title to the chore
-     */
-    @PostMapping(path = "/create/{submitterId}/{deadline}/{type}/{title}")
-    public void createChore(@PathVariable("submitterId") UUID submitterId, @PathVariable("deadline") String deadline, @PathVariable("type") String type,
-                             @PathVariable("title") String title){
+//    /**
+//     * Creates a new chore and stores it in the database
+//     * @param submitterId id of the user that created the chore
+//     * @param deadline deadline of the chore
+//     * @param type type of the chore
+//     * @param description short description of the chore
+//     * @param title a meaningful title to the chore
+//     */
+//    @PostMapping(path = "/create/{submitterId}/{deadline}/{type}/{title}")
+//    public void createChore(@PathVariable("submitterId") UUID submitterId, @PathVariable("deadline") String deadline, @PathVariable("type") String type,
+//                            @RequestBody Map<String,String> description, @PathVariable("title") String title){
+//
+//        choreManager.createChore(submitterId,deadline,type,description.get("description"),title);
+//    }
 
-        choreManager.createChore(submitterId,deadline,type,"---",title);
+    @PostMapping(path = "/create")
+    public void createChore(@RequestBody Map<String,Object> object){
+        Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+        logger.log(Level.WARNING,"" + object.toString());
+      //  choreManager.createChore(submitterId,deadline,type,description.get("description"),title);
     }
 
     /**
