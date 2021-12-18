@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -41,11 +42,13 @@ public class ChoreAPI {
 //        choreManager.createChore(submitterId,deadline,type,description.get("description"),title);
 //    }
 
-    @PostMapping(path = "/create", consumes = "application/json", produces = "application/json")
-    public Map<String,String> createChore(@RequestBody Map<String,String> object){
+    @PostMapping(path = "/create", produces = "application/json")
+    public Map<String,String> createChore(){
         Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-        logger.log(Level.WARNING,"" + object.toString());
-        return object;
+        logger.log(Level.WARNING,"CreateChore method" );
+        Map<String,String> ex = new HashMap<>();
+        ex.put("desc","txt");
+        return ex;
       //  choreManager.createChore(submitterId,deadline,type,description.get("description"),title);
     }
 
