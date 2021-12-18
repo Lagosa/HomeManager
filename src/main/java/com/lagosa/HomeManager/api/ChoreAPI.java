@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -33,8 +34,9 @@ public class ChoreAPI {
      */
     @PostMapping(path = "/create/{submitterId}/{deadline}/{type}/{title}")
     public void createChore(@PathVariable("submitterId") UUID submitterId, @PathVariable("deadline") String deadline, @PathVariable("type") String type,
-                            @RequestBody String description,@PathVariable("title") String title){
-        choreManager.createChore(submitterId,deadline,type,description,title);
+                            @RequestBody Map<String,String> description, @PathVariable("title") String title){
+
+        choreManager.createChore(submitterId,deadline,type,description.get("description"),title);
     }
 
     /**
