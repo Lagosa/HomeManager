@@ -41,7 +41,7 @@ public class ChoreAPI {
 //        choreManager.createChore(submitterId,deadline,type,description.get("description"),title);
 //    }
 
-    @PostMapping(path = "/create")
+    @PostMapping(path = "/create", consumes = "application/json", produces = "application/json")
     public Map<String,String> createChore(@RequestBody Map<String,String> object){
         Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
         logger.log(Level.WARNING,"" + object.toString());
