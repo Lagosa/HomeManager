@@ -6,7 +6,6 @@ import com.lagosa.HomeManager.model.Memento;
 import com.lagosa.HomeManager.model.Report;
 import com.lagosa.HomeManager.service.ChoreManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
@@ -42,13 +41,11 @@ public class ChoreAPI {
 //        choreManager.createChore(submitterId,deadline,type,description.get("description"),title);
 //    }
 
-    @PostMapping(
-            path = "/create",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-    )
-    public void createChore(@RequestBody Map<String,Object> object){
+    @PostMapping(path = "/create")
+    public Map<String,String> createChore(@RequestBody Map<String,String> object){
         Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
         logger.log(Level.WARNING,"" + object.toString());
+        return object;
       //  choreManager.createChore(submitterId,deadline,type,description.get("description"),title);
     }
 
