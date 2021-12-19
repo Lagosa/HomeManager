@@ -46,8 +46,9 @@ public class ChoreAPI {
      * @throws Exception if the user is not the submitter of the chore
      */
     @PostMapping(path = "/delete/{choreId}/{userId}")
-    public void deleteChore(@PathVariable("choreId") int choreId,@PathVariable("userId") UUID userId) throws Exception{
+    public String deleteChore(@PathVariable("choreId") int choreId,@PathVariable("userId") UUID userId) throws Exception{
         choreManager.deleteChore(choreId,userId);
+        return "ok";
     }
 
     /**
