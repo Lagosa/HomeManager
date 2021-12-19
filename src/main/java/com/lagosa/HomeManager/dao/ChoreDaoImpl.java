@@ -114,7 +114,7 @@ public class ChoreDaoImpl implements ChoreDao{
     @Override
     public Chore getChore(int choreId) {
         String sql = "SELECT chores.id AS id,family,choretypes.type AS typeName,submittedBy, users2.nickname AS submittedByName,doneby, users1.nickname AS doneByName,status,submissiondate,deadline,chores.type AS typeId,description,title,donedate " +
-                "FROM chores INNER JOIN choreTypes ON chores.type = choreTypes.id INNER JOIN users AS users1 ON users1.id = chores.doneby INNER JOIN users AS users2 ON users2.id = chores.submittedBy WHERE chores.id = ?";
+                "FROM chores INNER JOIN choreTypes ON chores.type = choreTypes.id LEFT JOIN users AS users1 ON users1.id = chores.doneby INNER JOIN users AS users2 ON users2.id = chores.submittedBy WHERE chores.id = ?";
         return jdbcTemplate.queryForObject(sql,new ChoreMapper(), choreId);
     }
 
