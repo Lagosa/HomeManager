@@ -132,7 +132,7 @@ public class ChoreManager {
         choreDao.addMemento(new Memento(familyManager.getFamilyOfUser(userId),title,dueDATE));
     }
 
-    public List<Memento> getMementos(UUID userId, Date startDate, Date endDate){
-        return choreDao.getMementos(familyManager.getFamilyOfUser(userId),startDate,endDate);
+    public List<Memento> getMementos(UUID userId){
+        return choreDao.getMementos(familyManager.getFamilyOfUser(userId));
     }
 }

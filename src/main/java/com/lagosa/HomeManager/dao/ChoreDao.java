@@ -83,5 +83,5 @@ public interface ChoreDao {
     Chore getChore(int choreId);
 
     void addMemento(Memento memento);
-    List<Memento> getMementos(UUID familyId, Date startDate, Date endDate);
+    List<Memento> getMementos(UUID familyId);
 }

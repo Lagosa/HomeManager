@@ -135,9 +135,9 @@ public class ChoreAPI {
         return "ok";
     }
 
-    @GetMapping(path = "/getMementos/{userId}/{startDate}/{endDate}")
-    public List<Memento> getMementos(@PathVariable("userId") UUID userId,@PathVariable("startDate") Date startDate,@PathVariable("endDate") Date endDate){
-        return choreManager.getMementos(userId, startDate, endDate);
+    @GetMapping(path = "/getMementos/{userId}")
+    public List<Memento> getMementos(@PathVariable("userId") UUID userId){
+        return choreManager.getMementos(userId);
     }
 
 }
