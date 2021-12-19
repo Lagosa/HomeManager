@@ -94,12 +94,12 @@ public class ChoreDaoImpl implements ChoreDao{
 
         String doneChores = "SELECT chores.id,chores.family,chores.submittedby,chores.doneby,chores.status,chores.submissiondate,chores.deadline,chores.type AS typeId," +
                 "chores.description,chores.title,choreTypes.type AS typeName,users.nickname AS submittedByName, usersDone.nickname AS doneByName  FROM chores INNER JOIN choreTypes ON chores.type = choreTypes.id " +
-                "INNER JOIN users ON users.id = chores.submittedby INNER JOIN users AS usersDone ON usersDone.id = chores.doneby WHERE status = 'DONE' AND chores.doneby = ? AND chores.submissiondate >=" +
-                "date_trunc('month',current_date - interval '1 month') AND chores.submissiondate <= date_trunc('month',current_date)  ORDER BY donedate DESC";
+                "INNER JOIN users ON users.id = chores.submittedby INNER JOIN users AS usersDone ON usersDone.id = chores.doneby WHERE status = 'DONE' AND chores.doneby = ? AND chores.submissiondate >= " +
+                "('month',current_date - interval '1' month) AND chores.submissiondate < date_trunc('month',current_date)  ORDER BY donedate DESC";
         String notFinishedChores = "SELECT chores.id,chores.family,chores.submittedby,chores.doneby,chores.status,chores.submissiondate,chores.deadline,chores.type AS typeId," +
                 "chores.description,chores.title,choreTypes.type AS typeName,users.nickname AS submittedByName, usersDone.nickname AS doneByName  FROM chores INNER JOIN choreTypes ON chores.type = choreTypes.id " +
                 "INNER JOIN users ON users.id = chores.submittedby INNER JOIN users AS usersDone ON usersDone.id = chores.doneby WHERE status = 'NOT_DONE' AND chores.doneby = ? AND chores.submissiondate > " +
-                "date_trunc('month',current_date - interval '1 month') AND chores.submissiondate <= date_trunc('month',current_date)  ORDER BY donedate DESC";
+                "date_trunc('month',current_date - interval '1' month) AND chores.submissiondate < date_trunc('month',current_date)  ORDER BY donedate DESC";
         List<Report> reportList = new ArrayList<>();
         for(User user:familyMembers){
             // for each user in the family
