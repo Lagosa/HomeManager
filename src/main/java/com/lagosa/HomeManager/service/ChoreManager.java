@@ -45,7 +45,7 @@ public class ChoreManager {
      */
     public void deleteChore(int choreId, UUID userId)throws Exception{
         Chore chore = choreDao.getChore(choreId);
-        if(chore != null && chore.getSubmittedBy() == userId){
+        if(chore != null && chore.getSubmittedBy().equals(userId)){
             choreDao.deleteChore(choreId);
         }else{
             throw new Exception("Can't delete chore! You are not the owner of the chore!");
