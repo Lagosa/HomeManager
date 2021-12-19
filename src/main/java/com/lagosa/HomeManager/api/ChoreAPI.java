@@ -43,6 +43,7 @@ public class ChoreAPI {
      * Deletes a chore if the submitter is the user who requested the deletion
      * @param choreId the chore that needs to be deleted
      * @param userId the user that requested the deletion
+     * @return OK if the task was performed
      * @throws Exception if the user is not the submitter of the chore
      */
     @PostMapping(path = "/delete/{choreId}/{userId}")
@@ -55,20 +56,24 @@ public class ChoreAPI {
      * Assigns to a chore the user that performed the request
      * @param choreId the chore to which the user needs to be assigned
      * @param userId the user that performed the request
+     * @return OK if the task was performed
      */
     @PostMapping(path = "/take/{choreId}/{userId}")
-    public void takeUpChore(@PathVariable("choreId") int choreId, @PathVariable("userId") UUID userId){
+    public String takeUpChore(@PathVariable("choreId") int choreId, @PathVariable("userId") UUID userId){
         choreManager.takeUpChore(choreId,userId);
+        return "ok";
     }
 
     /**
      * Marks a chore as done, and updates the doneBy field to the user who did it
      * @param choreId the chore that needs to be updated
      * @param userId the user that did the chore
+     * @return ok if task was performed
      */
     @PostMapping(path = "/markDone/{choreId}/{userId}")
-    public void markAsDone(@PathVariable("choreId") int choreId,@PathVariable("userId") UUID userId){
+    public String markAsDone(@PathVariable("choreId") int choreId,@PathVariable("userId") UUID userId){
         choreManager.markAsDone(choreId,userId);
+        return "ok";
     }
 
     /**
@@ -96,11 +101,13 @@ public class ChoreAPI {
      * @param choreId the chore that needs to be updated
      * @param newDeadline the new deadline
      * @param userId the user that requested the update
+     * @return ok if task was performed
      * @throws Exception if the user is not the submitter of the chore
      */
     @PostMapping(path = "/changeDeadline/{choreId}/{userId}/{deadline}")
-    public void changeDeadline(@PathVariable("choreId")int choreId,@PathVariable("userId") UUID userId,@PathVariable("deadline") String newDeadline) throws Exception{
+    public String changeDeadline(@PathVariable("choreId")int choreId,@PathVariable("userId") UUID userId,@PathVariable("deadline") String newDeadline) throws Exception{
         choreManager.changeDeadline(choreId,userId,newDeadline);
+        return "ok";
     }
 
     /**
@@ -123,8 +130,9 @@ public class ChoreAPI {
     }
 
     @PostMapping(path = "/addMemento/{user}/{title}/{dueDate}")
-    public void addMemento(@PathVariable("user") UUID userId,@PathVariable("title") String title,@PathVariable("dueDate") Date dueDATE){
+    public String addMemento(@PathVariable("user") UUID userId,@PathVariable("title") String title,@PathVariable("dueDate") Date dueDATE){
         choreManager.addMemento(userId, title, dueDATE);
+        return "ok";
     }
 
     @GetMapping(path = "/getMementos/{userId}/{startDate}/{endDate}")
