@@ -9,6 +9,8 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class ChoreManager {
@@ -44,6 +46,9 @@ public class ChoreManager {
      * @param userId the user that wants to delete id
      */
     public void deleteChore(int choreId, UUID userId)throws Exception{
+
+        Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+        log.log(Level.WARNING,""  + choreId + "-" + userId);
         Chore chore = choreDao.getChore(choreId);
         if(chore != null && chore.getSubmittedBy().equals(userId)){
             choreDao.deleteChore(choreId);
