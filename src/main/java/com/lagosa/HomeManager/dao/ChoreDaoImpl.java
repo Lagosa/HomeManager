@@ -128,7 +128,7 @@ public class ChoreDaoImpl implements ChoreDao{
 
     @Override
     public List<Memento> getMementos(UUID familyId) {
-        String sql = "SELECT id,family,title,duedate,status FROM MEMENTOS where family = ? AND duedate >= CURRENT_DATE";
+        String sql = "SELECT id,family,title,duedate,status FROM MEMENTOS where family = ? AND duedate >= CURRENT_DATE ORDER BY duedate DESC";
         return jdbcTemplate.query(sql,(rs,rowNum)->{
            Memento newMemeneto = new Memento((UUID) rs.getObject("family"),rs.getString("title"),rs.getDate("duedate"));
            newMemeneto.setId(rs.getInt("id"));

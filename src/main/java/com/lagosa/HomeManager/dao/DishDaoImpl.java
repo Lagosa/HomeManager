@@ -90,7 +90,7 @@ public class DishDaoImpl implements DishDao{
 
     @Override
     public Ingredient getIngredient(String ingredientName){
-        String sql = "SELECT id AS ingredient,ingredient AS ingredientName,measurementunit FROM ingredients WHERE ingredients.ingredient = ?";
+        String sql = "SELECT id AS ingredient,ingredient AS ingredientName,measurementunit, -1 AS quantity FROM ingredients WHERE ingredients.ingredient = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new IngredientMapper(), ingredientName);
         }catch (EmptyResultDataAccessException e){
@@ -133,7 +133,7 @@ public class DishDaoImpl implements DishDao{
 
     @Override
     public List<Ingredient> getAllIngredients() {
-        String sql = "SELECT id AS ingredient,ingredient AS ingredientName,measurementunit, -1 AS quantity FROM ingredients";
+        String sql = "SELECT id AS ingredient,ingredient AS ingredientName,measurementunit, -1 AS quantity FROM ingredients ORDER BY ingredientName ASC";
         return jdbcTemplate.query(sql,new IngredientMapper());
     }
 

@@ -27,7 +27,7 @@ public class DishAPI {
     }
 
     @PostMapping(path = "/insert/{userId}/{name}/{type}/{visibility}")
-    public void insertDish(@PathVariable("userId") UUID userId, @PathVariable("name") String name, @PathVariable("type") String type,
+    public String insertDish(@PathVariable("userId") UUID userId, @PathVariable("name") String name, @PathVariable("type") String type,
                                          @PathVariable("visibility") String visibility, @RequestBody Map<String, Object> body){
         String recipe = body.get("recipe").toString();
 
@@ -41,6 +41,7 @@ public class DishAPI {
             ingredientList.add(ingredient);
         }
         dishManager.insertDish(userId,name,type,recipe, Visibility.valueOf(visibility),ingredientList);
+        return "ok";
     }
 
     @GetMapping(path = "/getDishes/{userId}")
@@ -54,13 +55,15 @@ public class DishAPI {
     }
 
     @PostMapping(path = "/dishMade/{dishId}")
-    public void increaseNrTimesMade(@PathVariable("dishId") int dishId){
+    public String increaseNrTimesMade(@PathVariable("dishId") int dishId){
         dishManager.increaseNrTimesMade(dishId);
+        return "ok";
     }
 
     @PostMapping(path = "/changeVisibility/{dishId}/{visibility}")
-    public void changeVisibility(@PathVariable("dishId") int dishId,@PathVariable("visibility") String visibility){
+    public String changeVisibility(@PathVariable("dishId") int dishId,@PathVariable("visibility") String visibility){
         dishManager.changeVisibility(dishId,Visibility.valueOf(visibility));
+        return "ok";
     }
 
     @GetMapping(path = "/getAllIngredients")
@@ -74,8 +77,9 @@ public class DishAPI {
     }
 
     @PostMapping(path = "/plan/{userId}/{dishId}/{day}")
-    public void planDish(@PathVariable("userId") UUID userId,@PathVariable("dishId") int dishId,@PathVariable("day") String dayToPrepare){
+    public String planDish(@PathVariable("userId") UUID userId,@PathVariable("dishId") int dishId,@PathVariable("day") String dayToPrepare){
         dishManager.planDish(userId,dishId, Date.valueOf(dayToPrepare));
+        return "ok";
     }
 
     @GetMapping(path = "/getPlan/{userId}/{start}/{end}")
