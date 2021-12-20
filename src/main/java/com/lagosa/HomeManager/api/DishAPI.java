@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 @RestController
@@ -27,7 +24,7 @@ public class DishAPI {
     }
 
     @PostMapping(path = "/insert/{userId}/{name}/{type}/{visibility}")
-    public String insertDish(@PathVariable("userId") UUID userId, @PathVariable("name") String name, @PathVariable("type") String type,
+    public Map<String,String> insertDish(@PathVariable("userId") UUID userId, @PathVariable("name") String name, @PathVariable("type") String type,
                                          @PathVariable("visibility") String visibility, @RequestBody Map<String, Object> body){
         String recipe = body.get("recipe").toString();
 
@@ -41,7 +38,9 @@ public class DishAPI {
             ingredientList.add(ingredient);
         }
         dishManager.insertDish(userId,name,type,recipe, Visibility.valueOf(visibility),ingredientList);
-        return "ok";
+        Map<String,String> response = new HashMap<>();
+        response.put("status","ok");
+        return response;
     }
 
     @GetMapping(path = "/getDishes/{userId}")
