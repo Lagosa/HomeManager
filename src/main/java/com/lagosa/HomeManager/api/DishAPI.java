@@ -71,8 +71,8 @@ public class DishAPI {
     }
 
     @GetMapping(path = "/getRandom/{userId}/{typeId}")
-    public Dish getRandomDish(@PathVariable("userId") UUID userId,@PathVariable("typeId") int typeId){
-        return dishManager.getRandomDish(userId,typeId);
+    public Dish getRandomDish(@PathVariable("userId") UUID userId,@PathVariable("typeId") String type){
+        return dishManager.getRandomDish(userId,type);
     }
 
     @PostMapping(path = "/plan/{userId}/{dishId}/{day}")

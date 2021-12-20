@@ -66,9 +66,11 @@ public class DishManager {
         return dishDao.getAllIngredients();
     }
 
-    public Dish getRandomDish(UUID userId,int typeId){
+    public Dish getRandomDish(UUID userId,String type){
         List<Dish> dishes = getDishesOfAFamily(userId);
         List<Dish> dishesOfType = new ArrayList<>();
+
+        int typeId = dishDao.getTypeId(type);
 
         for(Dish dish : dishes){
             if(dish.getType() == typeId){
