@@ -102,7 +102,7 @@ public class PollDaoImpl implements PollDao{
 
     @Override
     public Map<String, Integer> getPollDishById(int pollDish) {
-        String sql = "SELECT poll,dish,id FROM dihpolls_dish WHERE id = ?";
+        String sql = "SELECT poll,dish,id FROM dishpolls_dish WHERE id = ?";
         return jdbcTemplate.queryForObject(sql,(rs,rownUM) -> {
             Map<String, Integer> map = new HashMap<>();
             map.put("pollId",rs.getInt("poll"));

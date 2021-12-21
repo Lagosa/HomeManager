@@ -22,24 +22,28 @@ public class PollAPI {
     }
 
     @PostMapping(path = "/create/{userId}/{message}")
-    public void createPoll(@PathVariable("userId") UUID userId,@PathVariable("message") String message){
+    public String createPoll(@PathVariable("userId") UUID userId,@PathVariable("message") String message){
         pollManager.createPoll(userId,message);
+        return "ok";
     }
 
     @PostMapping(path = "/addDish/{userId}/{pollId}/{dishId}")
-    public void addDishToPoll(@PathVariable("userId") UUID userId,@PathVariable("pollId") int pollId,@PathVariable("dishId") int dishId){
+    public String addDishToPoll(@PathVariable("userId") UUID userId,@PathVariable("pollId") int pollId,@PathVariable("dishId") int dishId){
         pollManager.addDishToPoll(userId,pollId,dishId);
+        return "ok";
     }
 
 
     @PostMapping(path = "/vote/{userId}/{dishPollId}/{vote}")
-    public void vote(@PathVariable("userId") UUID userId,@PathVariable("dishPollId") int dishPollId,@PathVariable("vote") String vote){
+    public String vote(@PathVariable("userId") UUID userId,@PathVariable("dishPollId") int dishPollId,@PathVariable("vote") String vote){
         pollManager.vote(userId,dishPollId, Vote.valueOf(vote));
+        return "ok";
     }
 
     @PostMapping(path = "/updateStatus/{userId}/{pollId}/{status}")
-    public void updatePollStatus(@PathVariable("userId") UUID userId,@PathVariable("pollId") int pollId,@PathVariable("status") String status){
+    public String updatePollStatus(@PathVariable("userId") UUID userId,@PathVariable("pollId") int pollId,@PathVariable("status") String status){
         pollManager.updatePollStatus(userId,pollId, PollStatus.valueOf(status));
+        return "ok";
     }
 
     @GetMapping(path = "/getOpenPolls/{userId}")
