@@ -95,7 +95,7 @@ public class FamilyDaoImpl implements FamilyDao{
     @Override
     public List<Notification> getNotifications(UUID userId) {
         String sql = "SELECT n.id,n.sender,n.receiver,n.title,n.message,n.dateSent,n.status,uR.nickname AS receiverName, uS.nickname AS senderName " +
-                "FROM notifications AS n INNER JOIN users AS uR ON uR.id = n.receiver INNER JOIN users AS uS ON uS.id = n.sender WHERE receiver = ? AND status = 'SENT'";
+                "FROM notifications AS n INNER JOIN users AS uR ON uR.id = n.receiver INNER JOIN users AS uS ON uS.id = n.sender WHERE n.receiver = ? AND n.status = 'SENT'";
         return jdbcTemplate.query(sql,new NotificationMapper(),userId);
     }
 
