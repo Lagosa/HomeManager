@@ -68,7 +68,7 @@ public class PollManager {
 
         pollDao.vote(userId,dishPollId,vote);
 
-        List<User> familyMembers = familyManager.getFamilyMembers(user.getFamilyId());
+        List<User> familyMembers = familyManager.getFamilyMembersByFamily(user.getFamilyId());
         if(votersAgainstDish.size() + votersForDish.size() + 1 == familyMembers.size()){
             Poll poll = pollDao.getPollById(pollDao.getPollDishById(dishPollId).get("pollId"));
             pollDao.setStatus(poll.getId(), PollStatus.CLOSED);

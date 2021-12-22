@@ -125,7 +125,7 @@ public class ChoreManager {
      */
     public List<Report> getReport(UUID userId){
         User user = familyManager.getUser(userId);
-        return choreDao.getReport(familyManager.getFamilyMembers(user.getFamilyId()));
+        return choreDao.getReport(familyManager.getFamilyMembersByFamily(user.getFamilyId()));
     }
 
     public void addMemento(UUID userId, String title, Date dueDATE){

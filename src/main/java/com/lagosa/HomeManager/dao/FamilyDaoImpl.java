@@ -123,7 +123,6 @@ public class FamilyDaoImpl implements FamilyDao{
         },family,startDate,endDate);
     }
 
-
     private static final class FamilyMapper implements RowMapper<Family> {
         // maps all the columns of the families table to fields in a family object
         Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);

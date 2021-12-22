@@ -123,8 +123,13 @@ public class FamilyManager {
      * @param familyId the id of the family whose members are sought
      * @return a list of users representing family members
      */
-    public List<User> getFamilyMembers(UUID familyId){
+    public List<User> getFamilyMembersByFamily(UUID familyId){
         return familyDao.getFamilyMembers(familyId);
+    }
+
+    public List<User> getFamilyMembersByUser(UUID userId){
+        User user = getUser(userId);
+        return getFamilyMembersByFamily(user.getFamilyId());
     }
 
     public void sendNotification(UUID sender, UUID receiver, String title, String message){

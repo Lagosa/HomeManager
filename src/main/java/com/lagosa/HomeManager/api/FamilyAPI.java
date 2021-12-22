@@ -1,6 +1,7 @@
 package com.lagosa.HomeManager.api;
 
 import com.lagosa.HomeManager.model.Notification;
+import com.lagosa.HomeManager.model.User;
 import com.lagosa.HomeManager.service.FamilyManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +22,10 @@ public class FamilyAPI {
         this.familyManager = familyManager;
     }
 
-    @PostMapping(path = "/sendNotification/{sender}/{receiver}/{title}")
-    public void sendNotification(@PathVariable("sender") UUID sender, @PathVariable("receiver") UUID receiver, @PathVariable("title") String title, @RequestBody String message) {
+    @PostMapping(path = "/sendNotification/{sender}/{receiver}/{title}/{message}")
+    public String sendNotification(@PathVariable("sender") UUID sender, @PathVariable("receiver") UUID receiver, @PathVariable("title") String title, @PathVariable("message") String message) {
         familyManager.sendNotification(sender, receiver, title, message);
+        return "ok";
     }
 
     @GetMapping(path = "/getNotifications/{userId}")
@@ -49,6 +51,11 @@ public class FamilyAPI {
     @GetMapping(path = "/getArrivalList/{user}/{start}/{end}")
     public List<Map<String,Object>> getArrivalList(@PathVariable("user") UUID userId,@PathVariable("start") String startDate,@PathVariable("end") String endDate){
         return familyManager.getArrivalList(userId, Date.valueOf(startDate),Date.valueOf(endDate));
+    }
+
+    @GetMapping(path = "/getFamilyMembers/{userId}")
+    public List<User> getFamilyMembers(@PathVariable("userId") UUID userId){
+        return familyManager.getFamilyMembersByUser(userId);
     }
 
 }
